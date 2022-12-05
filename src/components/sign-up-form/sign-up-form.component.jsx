@@ -1,5 +1,3 @@
-import { async } from "@firebase/util";
-import { ErrorResponse } from "@remix-run/router";
 import { useState } from "react";
 
 import FormInput from "../form-input/form-input.component";
@@ -24,8 +22,6 @@ const SignUpForm = () => {
 
   // set destructuring object for using values
   const { displayName, email, password, confirmPassword } = formFields;
-
-  console.log(formFields);
 
   const resetFormFields = () => {
     setFormFields(defaultFormFields);
