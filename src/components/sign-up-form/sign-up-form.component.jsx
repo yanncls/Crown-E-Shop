@@ -1,7 +1,15 @@
 import { async } from "@firebase/util";
+import { ErrorResponse } from "@remix-run/router";
 import { useState } from "react";
 
-import { createAuthUserWithEmailAndPassword } from "../../utils/firebase/firebase.utils";
+import FormInput from "../form-input/form-input.component";
+import Button from "../button/button.component";
+import "./sign-up-form.styles.scss";
+
+import {
+  createAuthUserWithEmailAndPassword,
+  createUserDocumentFromAuth,
+} from "../../utils/firebase/firebase.utils";
 
 // set default object fields
 const defaultFormFields = {
@@ -19,17 +27,31 @@ const SignUpForm = () => {
 
   console.log(formFields);
 
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     // confirm passwords matches
     if (password !== confirmPassword) {
-      console.log("vérifier que le mot de passe soit le même");
+      alert("le mot de passe ne correspond pas");
       return;
-    } else {
-      // verficate if createAuthUser auth a user
-      createAuthUserWithEmailAndPassword(email, password);
-      // create userDoc
+    }
+    try {
+      const { user } = await createAuthUserWithEmailAndPassword(
+        email,
+        password
+      );
+      await createUserDocumentFromAuth(user, { displayName });
+      resetFormFields();
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") {
+        alert("Email déjà utilisé");
+      } else {
+        console.log("user error", error);
+      }
     }
   };
 
@@ -40,49 +62,51 @@ const SignUpForm = () => {
   };
 
   return (
-    <div>
-      <h1>S'enregister avec un mail et un mot de passe</h1>
+    <div className="sign-up-container">
+      <h2>Vous n'avez pas de compte ?</h2>
+      <span>S'enregister avec un mail et un mot de passe</span>
       <form onSubmit={handleSubmit}>
-        <label htmlFor="">Nom</label>
-        <input
+        <FormInput
+          label="Nom"
           type="text"
           name="displayName"
-          id=""
+          id="displayName"
           required
           onChange={handleChange}
           value={displayName}
         />
-
-        <label htmlFor="">Email</label>
-        <input
+        <FormInput
+          label="Email"
           type="email"
           name="email"
-          id=""
+          id="email"
           required
           onChange={handleChange}
           value={email}
         />
 
-        <label htmlFor="">Mot de passe</label>
-        <input
+        <FormInput
+          label="Mot de passe"
           type="password"
           name="password"
-          id=""
+          id="password"
           required
           onChange={handleChange}
           value={password}
+          minLength="6"
         />
 
-        <label htmlFor="">Confirmer le mot de passe</label>
-        <input
+        <FormInput
+          label="Confirmer le mot de passe"
           type="password"
           name="confirmPassword"
-          id=""
+          id="confirmPassword"
           required
           onChange={handleChange}
           value={confirmPassword}
+          minLength="6"
         />
-        <button type="submit">S'enregistrer</button>
+        <Button type="submit">S'enregistrer</Button>
       </form>
     </div>
   );
