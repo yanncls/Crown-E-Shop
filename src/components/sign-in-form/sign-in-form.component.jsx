@@ -16,7 +16,6 @@ const defaultFormFields = {
 
 const SignInForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
-
   const { email, password } = formFields;
 
   const resetFormFields = () => {
@@ -24,8 +23,7 @@ const SignInForm = () => {
   };
 
   const signInWithGoogle = async () => {
-    const { user } = await signInWithGooglePopup();
-    await createUserDocumentFromAuth(user);
+    await signInWithGooglePopup();
   };
 
   const handleSubmit = async (event) => {
@@ -36,8 +34,8 @@ const SignInForm = () => {
       return;
     }
     try {
-      const response = await signInAuthWithEmailAndPassword(email, password);
-      console.log(response);
+      const { user } = await signInAuthWithEmailAndPassword(email, password);
+
       resetFormFields();
     } catch (error) {
       switch (error.code) {
@@ -68,17 +66,19 @@ const SignInForm = () => {
           label="Email"
           type="email"
           name="email"
-          id="email"
+          id="email-in"
           required
           onChange={handleChange}
+          value={email}
         />
         <FormInput
           label="Mot de passe"
           type="password"
           name="password"
-          id="password"
+          id="password-in"
           required
           onChange={handleChange}
+          value={password}
         />
         <div className="buttons-container">
           <Button type="submit">Se connecter</Button>
