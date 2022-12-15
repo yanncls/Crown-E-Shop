@@ -1,4 +1,4 @@
-# Crown e-shop(https://classy-sherbet-d78a4c.netlify.app)
+# <a href="https://classy-sherbet-d78a4c.netlify.app" target="_blank">Crown Shop</a>
 
 Boutique de vêtements streetware
 (en cours de création)
